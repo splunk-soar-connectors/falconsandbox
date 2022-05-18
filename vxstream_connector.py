@@ -6,6 +6,7 @@
 # Phantom imports
 
 import phantom.app as phantom
+import phantom.rules as ph_rules
 
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
@@ -98,14 +99,17 @@ class VxStreamConnector(BaseConnector):
 
     def _get_file_dict(self, param, action_result):
         vault_id = param['vault_id']
-
+        
         try:
-            if hasattr(Vault, 'get_file_path'):
-                payload = open(Vault.get_file_path(vault_id), 'rb')
-            else:
-                payload = open(Vault.get_vault_file(vault_id), 'rb')
-        except:
-            return action_result.set_status(phantom.APP_ERROR, 'File not found in vault ("{}")'.format(vault_id)), None
+            success, message, file_info = ph_rules.vault_info(container_id=self.get_container_id(), vault_id=vault_id)
+            if not file_info:
+                return action_result.set_status(phantom.APP_ERROR, 'Could not retrieve vault file ("{}"). Error: {}'.format(vault_id, message)), None
+            file_info = list(file_info)[0]
+
+            payload = open(file_info['path'], 'rb')
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, 'Unable to retrieve file from vault ("{}")'.format(vault_id)), None
 
         files = {'file': (param['file_name'], payload)}
 

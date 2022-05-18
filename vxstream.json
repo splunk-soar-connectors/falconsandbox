@@ -3,7 +3,7 @@
     "name": "Falcon Sandbox",
     "description": "This app integrates with Falcon Sandbox Services to provide investigative actions",
     "type": "sandbox",
-    "main_module": "vxstream_connector.pyc",
+    "main_module": "vxstream_connector.py",
     "app_version": "1.1.8",
     "package_name": "phantom_vxstream_sandbox",
     "product_vendor": "Hybrid Analysis",
