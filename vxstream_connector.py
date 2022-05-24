@@ -274,7 +274,7 @@ class VxStreamConnector(BaseConnector):
             try:
                 gzip_file_handle = gzip.GzipFile(fileobj=BytesIO(file_content))
                 f_out.write(gzip_file_handle.read())
-            except Exception as e:
+            except:
                 f_out_name += retrieved_file_extension
                 f_out = open(f_out_name, 'wb')
                 f_out.write(file_content)
@@ -591,9 +591,9 @@ class VxStreamConnector(BaseConnector):
             self.save_progress('Connection to server failed. Error: \'{}\''.format(str(exc)))
             self.set_status(phantom.APP_ERROR, 'Connectivity test failed')
             return self.get_status()
-        except ValueError as exc:
+        except ValueError as e:
             self.save_progress('Connection to server failed. It\'s highly possible that given base URL is invalid. Please re-check it and try again.')
-            self.set_status(phantom.APP_ERROR, 'Connectivity test failed')
+            self.set_status(phantom.APP_ERROR, 'Connectivity test failed. Error: {}'.format(e))
             return self.get_status()
 
         if api_api_key_data_object.if_request_success() is False:
