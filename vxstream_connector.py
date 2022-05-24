@@ -99,7 +99,7 @@ class VxStreamConnector(BaseConnector):
 
     def _get_file_dict(self, param, action_result):
         vault_id = param['vault_id']
-        
+
         try:
             success, message, file_info = ph_rules.vault_info(container_id=self.get_container_id(), vault_id=vault_id)
             if not file_info:
@@ -109,7 +109,7 @@ class VxStreamConnector(BaseConnector):
             payload = open(file_info['path'], 'rb')
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, 'Unable to retrieve file from vault ("{}")'.format(vault_id)), None
+            return action_result.set_status(phantom.APP_ERROR, 'Unable to retrieve file from vault ("{}"). Error: {}'.format(vault_id, e)), None
 
         files = {'file': (param['file_name'], payload)}
 
