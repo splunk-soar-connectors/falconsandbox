@@ -7,41 +7,41 @@
 
 import phantom.app as phantom
 import phantom.rules as ph_rules
-
-from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 try:
     from phantom.vault import Vault
-except:
+except Exception:
     import phantom.vault as Vault
 
-from vxstream_consts import *
-
+import gzip
 # Other imports used by this connector
 import json
-import requests
-import uuid
-import shutil
 import os
-from io import BytesIO
-import gzip
+import shutil
 import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import uuid
 from datetime import datetime
-import urllib
-from urlparse import urlparse
-from os.path import splitext, basename
+from io import BytesIO
+from os.path import basename, splitext
 
-from api_classes.api_key_current import ApiKeyCurrent
-from api_classes.api_search_terms import ApiSearchTerms
-from api_classes.api_search_hash import ApiSearchHash
-from api_classes.api_submit_file import ApiSubmitFile
-from api_classes.api_submit_online_file import ApiSubmitOnlineFile
-from api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
-from api_classes.api_report_summary import ApiReportSummary
-from api_classes.api_report_file import ApiReportFile
-from api_classes.api_report_state import ApiReportState
-from api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
+import requests
+
+from .api_classes.api_key_current import ApiKeyCurrent
+from .api_classes.api_report_file import ApiReportFile
+from .api_classes.api_report_state import ApiReportState
+from .api_classes.api_report_summary import ApiReportSummary
+from .api_classes.api_search_hash import ApiSearchHash
+from .api_classes.api_search_terms import ApiSearchTerms
+from .api_classes.api_submit_file import ApiSubmitFile
+from .api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
+from .api_classes.api_submit_online_file import ApiSubmitOnlineFile
+from .api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
+from .vxstream_consts import *
 
 
 class VxError(Exception):
@@ -103,7 +103,10 @@ class VxStreamConnector(BaseConnector):
         try:
             success, message, file_info = ph_rules.vault_info(container_id=self.get_container_id(), vault_id=vault_id)
             if not file_info:
-                return action_result.set_status(phantom.APP_ERROR, 'Could not retrieve vault file ("{}"). Error: {}'.format(vault_id, message)), None
+                return (
+                    action_result.set_status(phantom.APP_ERROR, 'Could not retrieve vault file ("{}"). Error: {}'.format(vault_id, message)),
+                    None,
+                )
             file_info = list(file_info)[0]
 
             payload = open(file_info['path'], 'rb')
@@ -237,7 +240,7 @@ class VxStreamConnector(BaseConnector):
         f_out_name = local_dir + '/online_file_{}_{}{}'.format(str(time.time()).replace('.', ''), filename, file_ext)
 
         self.save_progress('Fetching data from given url')
-        file_resp = urllib.urlopen(param['url'])
+        file_resp = urllib.request.urlopen(param['url'])
         f_out = open(f_out_name, 'wb')
         f_out.write(file_resp.read())
         f_out.close()
@@ -267,14 +270,16 @@ class VxStreamConnector(BaseConnector):
     def _save_file(self, directory, file_content, filename, suffix):
         retrieved_filename_without_gz_ext, retrieved_file_extension = os.path.splitext(filename)
 
-        new_file_name = retrieved_filename_without_gz_ext if retrieved_file_extension == '.gz' else filename  # As we want to unpack it, put filename without '.gz. extension
+        new_file_name = (
+            retrieved_filename_without_gz_ext if retrieved_file_extension == ".gz" else filename
+        )  # As we want to unpack it, put filename without '.gz. extension
         f_out_name = directory + '/Falcon_{}_{}_{}'.format(str(time.time()).replace('.', ''), suffix.replace(':', '_'), new_file_name)
         if retrieved_file_extension == '.gz':
             f_out = open(f_out_name, 'wb')
             try:
                 gzip_file_handle = gzip.GzipFile(fileobj=BytesIO(file_content))
                 f_out.write(gzip_file_handle.read())
-            except:
+            except Exception:
                 f_out_name += retrieved_file_extension
                 f_out = open(f_out_name, 'wb')
                 f_out.write(file_content)
@@ -373,54 +378,98 @@ class VxStreamConnector(BaseConnector):
         final_check_status_response = None
         start_time_of_checking = time.time()
 
-        self.save_progress('Successfully submitted chosen element for detonation. Waiting {} seconds to do status checking...'.format(PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS))
+        self.save_progress(
+            'Successfully submitted chosen element for detonation. Waiting {} seconds to do status checking...'.format(
+                PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS
+            )
+        )
         for x in range(0, PAYLOAD_SECURITY_DETONATION_QUEUE_NUMBER_OF_ATTEMPTS):
-            self.debug_print('detonate_debug_print_queue', 'Starting iteration {} of {}. Sleep time is {}.'.format(x, PAYLOAD_SECURITY_DETONATION_QUEUE_NUMBER_OF_ATTEMPTS,
-                                                                                                                       PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS))
+            self.debug_print(
+                'detonate_debug_print_queue',
+                'Starting iteration {} of {}. Sleep time is {}.'.format(
+                    x, PAYLOAD_SECURITY_DETONATION_QUEUE_NUMBER_OF_ATTEMPTS, PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS
+                ),
+            )
             time.sleep(PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS)
             api_check_state = self._check_status_partial(sample_params)
             api_response_json = api_check_state.get_response_json()
             final_check_status_response = api_response_json
 
             if api_response_json['state'] == PAYLOAD_SECURITY_SAMPLE_STATE_IN_PROGRESS:
-                self.save_progress('Submitted element is processed. Waiting {} seconds to do status checking...'.format(PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS))
+                self.save_progress(
+                    'Submitted element is processed. Waiting {} seconds to do status checking...'.format(
+                        PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS
+                    )
+                )
                 for y in range(0, PAYLOAD_SECURITY_DETONATION_PROGRESS_NUMBER_OF_ATTEMPTS):
-                    self.debug_print('detonate_debug_print_progress', 'Starting iteration {} of {}. Sleep time is {}.'.format(y, PAYLOAD_SECURITY_DETONATION_PROGRESS_NUMBER_OF_ATTEMPTS,
-                                                                                                                                  PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS))
+                    self.debug_print(
+                        'detonate_debug_print_progress',
+                        'Starting iteration {} of {}. Sleep time is {}.'.format(
+                            y,
+                            PAYLOAD_SECURITY_DETONATION_PROGRESS_NUMBER_OF_ATTEMPTS,
+                            PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS,
+                        ),
+                    )
                     time.sleep(PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS)
                     api_check_state = self._check_status_partial(sample_params)
                     api_response_json = api_check_state.get_response_json()
                     final_check_status_response = api_response_json
                     self.save_progress(
-                        PAYLOAD_SECURITY_MSG_CHECKED_STATE.format(api_response_json['state'], datetime.now().strftime("%Y-%m-%d %H:%M:%S"), y + 1,
-                                                                  PAYLOAD_SECURITY_DETONATION_PROGRESS_NUMBER_OF_ATTEMPTS,
-                                                                  PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS))
+                        PAYLOAD_SECURITY_MSG_CHECKED_STATE.format(
+                            api_response_json['state'],
+                            datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                            y + 1,
+                            PAYLOAD_SECURITY_DETONATION_PROGRESS_NUMBER_OF_ATTEMPTS,
+                            PAYLOAD_SECURITY_DETONATION_PROGRESS_TIME_INTERVAL_SECONDS,
+                        )
+                    )
 
                     if api_response_json['state'] in [PAYLOAD_SECURITY_SAMPLE_STATE_SUCCESS, PAYLOAD_SECURITY_SAMPLE_STATE_ERROR]:
-                        self.debug_print('detonate_debug_print_progress_result_status',
-                                         'Got state \'{}\' from \'{}\' state after \'{}\' seconds of work.'.format(api_response_json['state'], PAYLOAD_SECURITY_SAMPLE_STATE_IN_PROGRESS,
-                                                                                                                   (time.time() - start_time_of_checking)))
+                        self.debug_print(
+                            'detonate_debug_print_progress_result_status',
+                            'Got state \'{}\' from \'{}\' state after \'{}\' seconds of work.'.format(
+                                api_response_json['state'], PAYLOAD_SECURITY_SAMPLE_STATE_IN_PROGRESS, (time.time() - start_time_of_checking)
+                            ),
+                        )
                         break
                 else:  # 'else' is ran, when iteration was not broken. When it has happen, break also the outer loop.
                     continue
                 break
             elif api_response_json['state'] == PAYLOAD_SECURITY_SAMPLE_STATE_ERROR:
-                self.debug_print('detonate_debug_print_queue_result_status',
-                                 'Got state \'{}\' from \'{}\' state after \'{}\' seconds of work.'.format(PAYLOAD_SECURITY_SAMPLE_STATE_ERROR, PAYLOAD_SECURITY_SAMPLE_STATE_IN_QUEUE,
-                                                                                                           (time.time() - start_time_of_checking)))
+                self.debug_print(
+                    'detonate_debug_print_queue_result_status',
+                    'Got state \'{}\' from \'{}\' state after \'{}\' seconds of work.'.format(
+                        PAYLOAD_SECURITY_SAMPLE_STATE_ERROR, PAYLOAD_SECURITY_SAMPLE_STATE_IN_QUEUE, (time.time() - start_time_of_checking)
+                    ),
+                )
                 break
             elif api_response_json['state'] == PAYLOAD_SECURITY_SAMPLE_STATE_SUCCESS:
                 break
             else:
                 self.save_progress(
-                    PAYLOAD_SECURITY_MSG_CHECKED_STATE.format(api_response_json['state'], datetime.now().strftime("%Y-%m-%d %H:%M:%S"), x + 1, PAYLOAD_SECURITY_DETONATION_QUEUE_NUMBER_OF_ATTEMPTS,
-                                                              PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS))
+                    PAYLOAD_SECURITY_MSG_CHECKED_STATE.format(
+                        api_response_json['state'],
+                        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        x + 1,
+                        PAYLOAD_SECURITY_DETONATION_QUEUE_NUMBER_OF_ATTEMPTS,
+                        PAYLOAD_SECURITY_DETONATION_QUEUE_TIME_INTERVAL_SECONDS,
+                    )
+                )
 
         if final_check_status_response['state'] in [PAYLOAD_SECURITY_SAMPLE_STATE_IN_QUEUE, PAYLOAD_SECURITY_SAMPLE_STATE_IN_PROGRESS]:
-            raise VxError('Action reached the analysis timeout. Last state is \'{}\'. You can still observe the state using \'check status\' action and after successful analysis, retrieve results by \'get report\' action.'.format(final_check_status_response['state']))
+            raise VxError(
+                'Action reached the analysis timeout. Last state is \'{}\'. You can still observe the state using \'check status\' action '
+                'and after successful analysis, retrieve results by \'get report\' action.'.format(
+                    final_check_status_response['state']
+                )
+            )
         elif final_check_status_response['state'] == PAYLOAD_SECURITY_SAMPLE_STATE_ERROR:
-            raise VxError('During the analysis, error has occurred: \'{}\'. For more possible information, please visit sample page({}) and/or Hybrid Analysis Knowledge Base.'.format(
-                                         final_check_status_response['error'], self._build_sample_url(sample_id)))
+            raise VxError(
+                'During the analysis, error has occurred: \'{}\'. For more possible information, please visit sample '
+                'page({}) and/or Hybrid Analysis Knowledge Base.'.format(
+                    final_check_status_response['error'], self._build_sample_url(sample_id)
+                )
+            )
         else:
             self.save_progress(PAYLOAD_SECURITY_MSG_DETONATION_QUERYING_REPORT)
             partial_results = self._get_report_partial({'id': sample_id})
@@ -443,7 +492,12 @@ class VxStreamConnector(BaseConnector):
 
         action_result.add_data(report_api_json_response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, 'Successfully submitted URL and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(report_api_json_response['sha256'], param['environment_id']))
+        return action_result.set_status(
+            phantom.APP_SUCCESS,
+            'Successfully submitted URL and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(
+                report_api_json_response['sha256'], param['environment_id']
+            ),
+        )
 
     def _detonate_file(self, param):
         config = self.get_config()
@@ -468,7 +522,12 @@ class VxStreamConnector(BaseConnector):
 
         action_result.add_data(report_api_json_response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, 'Successfully submitted file and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(report_api_json_response['sha256'], param['environment_id']))
+        return action_result.set_status(
+            phantom.APP_SUCCESS,
+            'Successfully submitted file and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(
+                report_api_json_response['sha256'], param['environment_id']
+            ),
+        )
 
     def _detonate_online_file(self, param):
         config = self.get_config()
@@ -487,7 +546,12 @@ class VxStreamConnector(BaseConnector):
 
         action_result.add_data(report_api_json_response)
 
-        return action_result.set_status(phantom.APP_SUCCESS, 'Successfully submitted file and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(report_api_json_response['sha256'], param['environment_id']))
+        return action_result.set_status(
+            phantom.APP_SUCCESS,
+            'Successfully submitted file and retrieved analysis result. Sample sha256: \'{}\' and environment ID: \'{}\''.format(
+                report_api_json_response['sha256'], param['environment_id']
+            ),
+        )
 
     def _convert_verdict_name_to_key(self, verdict_name):
         return verdict_name.replace(' ', '_')
@@ -546,7 +610,9 @@ class VxStreamConnector(BaseConnector):
             action_result.set_status(phantom.APP_ERROR, '{}'.format(str(exc)))
             return action_result.get_status()
 
-        verdict_summary = dict.fromkeys([self._convert_verdict_name_to_key(verdict_name) for verdict_name in PAYLOAD_SECURITY_SAMPLE_VERDICT_NAMES], 0)
+        verdict_summary = dict.fromkeys(
+            [self._convert_verdict_name_to_key(verdict_name) for verdict_name in PAYLOAD_SECURITY_SAMPLE_VERDICT_NAMES], 0
+        )
         api_response_json = api_object.get_response_json()
         data = api_response_json if 'hash' in param else api_response_json['result']
 
@@ -592,7 +658,9 @@ class VxStreamConnector(BaseConnector):
             self.set_status(phantom.APP_ERROR, 'Connectivity test failed')
             return self.get_status()
         except ValueError as e:
-            self.save_progress('Connection to server failed. It\'s highly possible that given base URL is invalid. Please re-check it and try again.')
+            self.save_progress(
+                'Connection to server failed. It\'s highly possible that given base URL is invalid. Please re-check it and try again.'
+            )
             self.set_status(phantom.APP_ERROR, 'Connectivity test failed. Error: {}'.format(e))
             return self.get_status()
 
@@ -604,7 +672,12 @@ class VxStreamConnector(BaseConnector):
         api_json_response = api_api_key_data_object.get_response_json()
 
         if int(api_json_response['auth_level']) < 100:
-            self.save_progress('You are using API Key with \'{}\' privileges. Some of actions can not work, as they need at least \'default\' privileges. To obtain proper key, please contact with support@hybrid-analysis.com.'.format(api_json_response['auth_level_name']))
+            self.save_progress(
+                'You are using API Key with \'{}\' privileges. Some of actions can not work, as they need at '
+                'least \'default\' privileges. To obtain proper key, please contact with support@hybrid-analysis.com.'.format(
+                    api_json_response['auth_level_name']
+                )
+            )
 
         self.save_progress(api_api_key_data_object.get_prepared_response_msg())
 
@@ -661,8 +734,10 @@ class VxStreamConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+    from sys import exit
+
+    import pudb
 
     pudb.set_trace()
 
@@ -678,15 +753,16 @@ if __name__ == '__main__':
     username = args.username
     password = args.password
 
-    if (username is not None and password is None):
+    if username is not None and password is None:
 
         # User specified a username but not a password, so ask
         import getpass
+
         password = getpass.getpass("Password: ")
 
-    if (username and password):
+    if username and password:
         try:
-            print ("Accessing the Login page")
+            print("Accessing the Login page")
             r = requests.get(phantom.BaseConnector._get_phantom_base_url() + "login", verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -699,11 +775,11 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken=' + csrftoken
             headers['Referer'] = phantom.BaseConnector._get_phantom_base_url() + 'login'
 
-            print ("Logging into Platform to get the session id")
+            print("Logging into Platform to get the session id")
             r2 = requests.post(phantom.BaseConnector._get_phantom_base_url() + "login", verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platfrom. Error: " + str(e))
+            print("Unable to get session id from the platfrom. Error: " + str(e))
             exit(1)
 
     with open(args.input_test_json) as f:
@@ -714,11 +790,11 @@ if __name__ == '__main__':
         connector = VxStreamConnector()
         connector.print_progress_message = True
 
-        if (session_id is not None):
+        if session_id is not None:
             in_json['user_session_token'] = session_id
             connector._set_csrf_info(csrftoken, headers['Referer'])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
