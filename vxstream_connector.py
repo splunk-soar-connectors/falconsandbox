@@ -22,12 +22,12 @@ import os
 import shutil
 import time
 import urllib.error
-import urllib.parse
 import urllib.request
 import uuid
 from datetime import datetime
 from io import BytesIO
 from os.path import basename, splitext
+from urllib.parse import urlparse
 
 import requests
 
@@ -153,6 +153,7 @@ class VxStreamConnector(BaseConnector):
         return self._make_api_call_with_err_handling(api_check_state, 'Getting sample status failed.')
 
     def _check_status(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         self.save_progress(PAYLOAD_SECURITY_MSG_QUERYING)
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -182,6 +183,8 @@ class VxStreamConnector(BaseConnector):
         return api_object.get_response_json()
 
     def _check_url_hash(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         self.save_progress(PAYLOAD_SECURITY_MSG_QUERYING)
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -196,11 +199,15 @@ class VxStreamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, 'Successfully get hash of url: \'{}\''.format(param['url']))
 
     def _get_pcap(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         param.update({'file_type': 'pcap'})
 
         return self._get_file(param)
 
     def _get_file(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         api_result_object = ApiReportFile(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -224,6 +231,7 @@ class VxStreamConnector(BaseConnector):
         return action_result.get_status()
 
     def _get_file_from_url(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         disassembled = urlparse(param['url'])
         filename, file_ext = splitext(basename(disassembled.path))
@@ -347,6 +355,8 @@ class VxStreamConnector(BaseConnector):
         return {'api_object': api_summary_object, 'prepared_json_response': api_response_json}
 
     def _get_report(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         self.save_progress(PAYLOAD_SECURITY_MSG_QUERYING)
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -476,6 +486,8 @@ class VxStreamConnector(BaseConnector):
             return partial_results['prepared_json_response']
 
     def _detonate_url(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         api_submit_file_object = ApiSubmitUrlForAnalysis(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
         self.save_progress(PAYLOAD_SECURITY_MSG_SUBMITTING_FILE)
@@ -500,6 +512,8 @@ class VxStreamConnector(BaseConnector):
         )
 
     def _detonate_file(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         api_submit_file_object = ApiSubmitFile(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
         self.save_progress(PAYLOAD_SECURITY_MSG_SUBMITTING_FILE)
@@ -530,6 +544,8 @@ class VxStreamConnector(BaseConnector):
         )
 
     def _detonate_online_file(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         api_submit_file_object = ApiSubmitOnlineFile(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
         self.save_progress(PAYLOAD_SECURITY_MSG_SUBMITTING_FILE)
@@ -557,12 +573,17 @@ class VxStreamConnector(BaseConnector):
         return verdict_name.replace(' ', '_')
 
     def _hunt_similar(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         return self._search_terms({'similar_to': param['sha256']})
 
     def _hunt_file(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         return self._search_terms(param)
 
     def _hunt_hash(self, param, action_result=None):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         if action_result is None:
             action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -573,12 +594,15 @@ class VxStreamConnector(BaseConnector):
         return self._partial_search(param, api_search_object, action_result)
 
     def _hunt_malware_family(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         return self._search_terms({'vx_family': param['malware_family']})
 
     def _hunt_domain(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         return self._search_terms(param)
 
     def _hunt_url(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         self.save_progress('Checking url hash in Falcon Sandbox')
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -592,9 +616,12 @@ class VxStreamConnector(BaseConnector):
         return self._hunt_hash(params_for_searching, action_result)
 
     def _hunt_ip(self, param):
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         return self._search_terms(param)
 
     def _search_terms(self, param):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         action_result = self.add_action_result(ActionResult(dict(param)))
         api_search_object = ApiSearchTerms(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
@@ -648,6 +675,8 @@ class VxStreamConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, 'Found {} matching samples'.format(summary['found']))
 
     def _test_connectivity(self):
+
+        self.debug_print("In action handler for: {}".format(self.get_action_identifier()))
         config = self.get_config()
         api_api_key_data_object = ApiKeyCurrent(config[PAYLOAD_SECURITY_API_KEY], self._base_url, self)
         self.save_progress(PAYLOAD_SECURITY_MSG_QUERYING)
