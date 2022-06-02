@@ -792,7 +792,8 @@ if __name__ == '__main__':
     if username and password:
         try:
             print("Accessing the Login page")
-            r = requests.get(phantom.BaseConnector._get_phantom_base_url() + "login", verify=False)
+            base_url = phantom.BaseConnector._get_phantom_base_url()
+            r = requests.get(base_url + "login", verify=False)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -802,10 +803,10 @@ if __name__ == '__main__':
 
             headers = dict()
             headers['Cookie'] = 'csrftoken=' + csrftoken
-            headers['Referer'] = phantom.BaseConnector._get_phantom_base_url() + 'login'
+            headers['Referer'] = base_url + 'login'
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(phantom.BaseConnector._get_phantom_base_url() + "login", verify=False, data=data, headers=headers)
+            r2 = requests.post(base_url + "login", verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
