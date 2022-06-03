@@ -16,6 +16,7 @@
     "logo_dark": "logo_vxstream_dark.svg",
     "license": "Copyright (C) 2018 Hybrid Analysis GmbH",
     "python_version": "3",
+    "fips_compliant": false,
     "configuration": {
         "base_url": {
             "data_type": "string",
