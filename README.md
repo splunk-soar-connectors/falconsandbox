@@ -2,17 +2,15 @@
 # Falcon Sandbox
 
 Publisher: Hybrid Analysis  
-Connector Version: 1\.1\.7  
+Connector Version: 2\.0\.0  
 Product Vendor: Hybrid Analysis  
 Product Name: Falcon Sandbox  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 3\.5\.180  
+Minimum Product Version: 5\.2\.0  
 
 This app integrates with Falcon Sandbox Services to provide investigative actions
 
-[comment]: # " File: readme.md"
-[comment]: # "  Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)"
-[comment]: # ""
+
 ##### Usage
 
 Should you not be using hybrid-analysis.com as the application server, but a private cloud or on
@@ -24,6 +22,16 @@ on your instance.
 After creating the Falcon Sandbox asset, we recommended to test the application server connectivity.
 That way, you make sure that the provided base URL and API credentials are working correctly.
 
+Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the Okta server. Below are the default
+ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
+
 
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Falcon Sandbox asset in SOAR.
@@ -31,7 +39,7 @@ The below configuration variables are required for this Connector to operate.  T
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **base\_url** |  required  | string | Base URL to Falcon Sandbox Application Server
-**verify\_server\_cert** |  required  | boolean | Verify server certificate
+**verify\_server\_cert** |  optional  | boolean | Verify server certificate
 **api\_key** |  required  | password | API Key
 
 ### Supported Actions  
@@ -86,42 +94,42 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.authentihash | string | 
+action\_result\.parameter\.av\_detection | string | 
+action\_result\.parameter\.av\_family\_substring | string |  `malware family` 
+action\_result\.parameter\.country | string | 
+action\_result\.parameter\.domain | string |  `domain` 
+action\_result\.parameter\.environment\_id | numeric | 
+action\_result\.parameter\.file\_name | string |  `file name` 
+action\_result\.parameter\.file\_type | string | 
+action\_result\.parameter\.file\_type\_substring | string | 
+action\_result\.parameter\.hashtag | string |  `falcon sandbox tag` 
+action\_result\.parameter\.host | string |  `ip` 
+action\_result\.parameter\.imphash | string |  `imphash` 
+action\_result\.parameter\.port | numeric |  `port` 
+action\_result\.parameter\.similar\_context | numeric |  `sha256` 
+action\_result\.parameter\.similar\_samples | string |  `sha256` 
+action\_result\.parameter\.ssdeep | string |  `ssdeep` 
+action\_result\.parameter\.url | string |  `url` 
+action\_result\.parameter\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.similar\_context | numeric |  `sha256` 
-action\_result\.parameter\.port | numeric |  `port` 
-action\_result\.parameter\.host | string |  `ip` 
-action\_result\.parameter\.ssdeep | string |  `ssdeep` 
-action\_result\.parameter\.av\_family\_substring | string |  `malware family` 
-action\_result\.parameter\.file\_type | string | 
-action\_result\.parameter\.hashtag | string |  `falcon sandbox tag` 
-action\_result\.parameter\.file\_type\_substring | string | 
-action\_result\.parameter\.imphash | string |  `imphash` 
-action\_result\.parameter\.av\_detection | string | 
-action\_result\.parameter\.authentihash | string | 
-action\_result\.parameter\.country | string | 
-action\_result\.parameter\.similar\_samples | string |  `sha256` 
-action\_result\.parameter\.environment\_id | numeric | 
-action\_result\.parameter\.domain | string |  `domain` 
-action\_result\.parameter\.verdict | string |  `falcon sandbox verdict` 
-action\_result\.parameter\.file\_name | string |  `file name` 
-action\_result\.parameter\.url | string |  `url` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -140,25 +148,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.sha256 | string |  `sha256` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -177,25 +185,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.host | string |  `ip` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.host | string |  `ip` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -214,25 +222,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.hash | string |  `sha256`  `sha1`  `md5` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.hash | string |  `sha256`  `sha1`  `md5` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -251,25 +259,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.file\_name | string |  `file name` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.file\_name | string |  `file name` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -288,25 +296,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.malware\_family | string |  `malware family` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.malware\_family | string |  `malware family` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -325,25 +333,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.domain | string |  `domain` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.domain | string |  `domain` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -362,25 +370,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.parameter\.url | string |  `url` 
+action\_result\.data\.\*\.environment | string | 
+action\_result\.data\.\*\.environment\_description | string | 
+action\_result\.data\.\*\.environment\_id | numeric | 
 action\_result\.data\.\*\.job\_id | string |  `falcon sandbox job id` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.environment | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.environment\_description | string | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
 action\_result\.data\.\*\.threat\_score | string | 
 action\_result\.data\.\*\.threat\_score\_verbose | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
 action\_result\.summary\.found | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
-action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
 action\_result\.summary\.found\_by\_verdict\_name\.malicious | numeric | 
-action\_result\.parameter\.url | string |  `url` 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_specific\_threat | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.no\_verdict | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.suspicious | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.unknown | numeric | 
+action\_result\.summary\.found\_by\_verdict\_name\.whitelisted | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -399,14 +407,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.file\_name | string |  `file name` 
-action\_result\.data\.\*\.vault\_id | string |  `vault id` 
-action\_result\.data\.\*\.file\_type | string | 
 action\_result\.parameter\.url | string |  `url` 
+action\_result\.data\.\*\.file\_name | string |  `file name` 
+action\_result\.data\.\*\.file\_type | string | 
+action\_result\.data\.\*\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_name | string |  `file name` 
-action\_result\.summary\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_type | string | 
+action\_result\.summary\.vault\_id | string |  `vault id` 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -425,14 +433,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.file\_name | string |  `file name` 
-action\_result\.data\.\*\.vault\_id | string |  `vault id` 
-action\_result\.data\.\*\.file\_type | string | 
 action\_result\.parameter\.id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.file\_name | string |  `file name` 
+action\_result\.data\.\*\.file\_type | string | 
+action\_result\.data\.\*\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_name | string |  `file name` 
-action\_result\.summary\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_type | string | 
+action\_result\.summary\.vault\_id | string |  `vault id` 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -452,15 +460,15 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.\*\.file\_name | string |  `file name` 
-action\_result\.data\.\*\.vault\_id | string |  `vault id` 
-action\_result\.data\.\*\.file\_type | string | 
 action\_result\.parameter\.file\_type | string | 
 action\_result\.parameter\.id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.file\_name | string |  `file name` 
+action\_result\.data\.\*\.file\_type | string | 
+action\_result\.data\.\*\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_name | string |  `file name` 
-action\_result\.summary\.vault\_id | string |  `vault id` 
 action\_result\.summary\.file\_type | string | 
+action\_result\.summary\.vault\_id | string |  `vault id` 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -479,30 +487,31 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.parameter\.id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
+action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.domains\.\* | string |  `domain` 
 action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
-action\_result\.data\.\*\.target\_url | string |  `url` 
-action\_result\.data\.\*\.size | string |  `file size` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.imphash | string |  `imphash` 
+action\_result\.data\.\*\.interesting | boolean | 
 action\_result\.data\.\*\.md5 | string |  `md5` 
 action\_result\.data\.\*\.sha1 | string |  `sha1` 
+action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.size | string |  `file size` 
 action\_result\.data\.\*\.ssdeep | string |  `ssdeep` 
-action\_result\.data\.\*\.imphash | string |  `imphash` 
-action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
-action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.data\.\*\.target\_url | string |  `url` 
 action\_result\.data\.\*\.threat\_score | numeric | 
-action\_result\.data\.\*\.interesting | boolean | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
-action\_result\.data\.\*\.domains\.\* | string |  `domain` 
-action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
-action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
 action\_result\.data\.\*\.total\_network\_connections | numeric | 
 action\_result\.data\.\*\.total\_processes | numeric | 
 action\_result\.data\.\*\.total\_signatures | numeric | 
-action\_result\.parameter\.id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -521,12 +530,12 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.parameter\.id | string |  `falcon sandbox job id` 
-action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.error\_msg | string | 
-action\_result\.summary\.status | string | 
+action\_result\.data\.\*\.status | string | 
 action\_result\.summary\.error\_msg | string | 
+action\_result\.summary\.status | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -545,9 +554,10 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.parameter\.url | string |  `url` 
 action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -567,31 +577,32 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.parameter\.environment\_id | numeric | 
 action\_result\.parameter\.url | string |  `url` 
-action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
+action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.domains\.\* | string |  `domain` 
 action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
-action\_result\.data\.\*\.target\_url | string |  `url` 
-action\_result\.data\.\*\.size | string |  `file size` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.imphash | string |  `imphash` 
+action\_result\.data\.\*\.interesting | boolean | 
 action\_result\.data\.\*\.md5 | string |  `md5` 
 action\_result\.data\.\*\.sha1 | string |  `sha1` 
+action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.size | string |  `file size` 
 action\_result\.data\.\*\.ssdeep | string |  `ssdeep` 
-action\_result\.data\.\*\.imphash | string |  `imphash` 
-action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
-action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.data\.\*\.target\_url | string |  `url` 
 action\_result\.data\.\*\.threat\_score | numeric | 
-action\_result\.data\.\*\.interesting | boolean | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
-action\_result\.data\.\*\.domains\.\* | string |  `domain` 
-action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
-action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
 action\_result\.data\.\*\.total\_network\_connections | numeric | 
 action\_result\.data\.\*\.total\_processes | numeric | 
 action\_result\.data\.\*\.total\_signatures | numeric | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -611,31 +622,32 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.parameter\.environment\_id | numeric | 
 action\_result\.parameter\.url | string |  `url` 
-action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
+action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.domains\.\* | string |  `domain` 
 action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
-action\_result\.data\.\*\.target\_url | string |  `url` 
-action\_result\.data\.\*\.size | string |  `file size` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.imphash | string |  `imphash` 
+action\_result\.data\.\*\.interesting | boolean | 
 action\_result\.data\.\*\.md5 | string |  `md5` 
 action\_result\.data\.\*\.sha1 | string |  `sha1` 
+action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.size | string |  `file size` 
 action\_result\.data\.\*\.ssdeep | string |  `ssdeep` 
-action\_result\.data\.\*\.imphash | string |  `imphash` 
-action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
-action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.data\.\*\.target\_url | string |  `url` 
 action\_result\.data\.\*\.threat\_score | numeric | 
-action\_result\.data\.\*\.interesting | boolean | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
-action\_result\.data\.\*\.domains\.\* | string |  `domain` 
-action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
-action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
 action\_result\.data\.\*\.total\_network\_connections | numeric | 
 action\_result\.data\.\*\.total\_processes | numeric | 
 action\_result\.data\.\*\.total\_signatures | numeric | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -656,32 +668,33 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
 action\_result\.status | string | 
-action\_result\.message | string | 
-action\_result\.parameter\.vault\_id | string |  `vault id` 
 action\_result\.parameter\.environment\_id | numeric | 
 action\_result\.parameter\.file\_name | string |  `file name` 
-action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.parameter\.vault\_id | string |  `vault id` 
+action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
+action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.domains\.\* | string |  `domain` 
 action\_result\.data\.\*\.environment\_id | numeric | 
-action\_result\.data\.\*\.submit\_name | string |  `file name` 
-action\_result\.data\.\*\.target\_url | string |  `url` 
-action\_result\.data\.\*\.size | string |  `file size` 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
+action\_result\.data\.\*\.imphash | string |  `imphash` 
+action\_result\.data\.\*\.interesting | boolean | 
 action\_result\.data\.\*\.md5 | string |  `md5` 
 action\_result\.data\.\*\.sha1 | string |  `sha1` 
+action\_result\.data\.\*\.sha256 | string |  `sha256` 
+action\_result\.data\.\*\.size | string |  `file size` 
 action\_result\.data\.\*\.ssdeep | string |  `ssdeep` 
-action\_result\.data\.\*\.imphash | string |  `imphash` 
-action\_result\.data\.\*\.classification\_tags\.\* | string |  `malware family`  `falcon sandbox tag` 
-action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.submit\_name | string |  `file name` 
+action\_result\.data\.\*\.target\_url | string |  `url` 
 action\_result\.data\.\*\.threat\_score | numeric | 
-action\_result\.data\.\*\.interesting | boolean | 
-action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
-action\_result\.data\.\*\.domains\.\* | string |  `domain` 
-action\_result\.data\.\*\.hosts\.\* | string |  `ip` 
-action\_result\.data\.\*\.compromised\_hosts\.\* | string |  `ip` 
 action\_result\.data\.\*\.total\_network\_connections | numeric | 
 action\_result\.data\.\*\.total\_processes | numeric | 
 action\_result\.data\.\*\.total\_signatures | numeric | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.url\_analysis | boolean | 
+action\_result\.data\.\*\.verdict | string |  `falcon sandbox verdict` 
+action\_result\.data\.job\_id | string |  `falcon sandbox job id` 
+action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
