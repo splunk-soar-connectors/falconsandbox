@@ -30,8 +30,10 @@ class ApiCaller:
     request_method_name = ''
 
     api_result_msg = ''
-    api_unexpected_error_msg = 'Unexpected error has occurred (HTTP code: {}). Please try again later or connect with the support'
-    api_unexpected_error_404_msg = 'Unexpected error has occurred (HTTP code: {}). This error is mostly occurring when called webservice is outdated and so does not support current action. If you believe it is an error, please contact with the support'
+    api_unexpected_error_msg = 'Unexpected error has occurred (HTTP code: {}). Please try again later or connect with the support '
+    api_unexpected_error_404_msg = ('Unexpected error has occurred (HTTP code: {}). This error is mostly occurring when called webservice'
+                                    'is outdated and so does not support current action. If you believe it is an error, please contact '
+                                    'with the support')
     api_success_msg = 'Your request was successfully processed by Falcon Sandbox'
     api_expected_error_msg = 'API error has occurred. HTTP code: {}, message: \'{}\''
 
@@ -67,7 +69,9 @@ class ApiCaller:
         caller_function = getattr(request_handler, self.request_method_name)
         headers['api-key'] = self.api_key
         self.phantom.debug_print('sent_headers', headers)
-        self.api_response = caller_function(request_url, data=self.data, params=self.params, files=self.files, headers=headers, verify=verify_server)
+        self.api_response = caller_function(
+            request_url, data=self.data, params=self.params, files=self.files, headers=headers, verify=verify_server
+        )
 
         self.phantom.debug_print('request_headers', self.api_response.headers)
         self.phantom.debug_print('request_content_type', self.api_response.headers['Content-Type'])

@@ -3,14 +3,16 @@
 # Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
 #
 
-PAYLOAD_SECURITY_API_KEY = 'api_key'
-PAYLOAD_SECURITY_API_SECRET = 'api_secret'
+PAYLOAD_SECURITY_API_KEY = 'api_key'  # pragma: allowlist secret
+PAYLOAD_SECURITY_API_SECRET = 'api_secret'  # pragma: allowlist secret
 PAYLOAD_SECURITY_WEBSERVICE_BASE_URL = 'base_url'
 PAYLOAD_SECURITY_VERIFY_SERVER_CERT = 'verify_server_cert'
 
 PAYLOAD_SECURITY_MSG_QUERYING = 'Querying Falcon Sandbox'
 PAYLOAD_SECURITY_MSG_SUBMITTING_FILE = 'Submitting file/url to Falcon Sandbox'
-PAYLOAD_SECURITY_MSG_CHECKED_STATE = 'Actual state is \'{}\'. Last check: {}. Done already {} attempts of foreseen {}. The next attempt will be done after {} seconds.'
+PAYLOAD_SECURITY_MSG_CHECKED_STATE = (
+    'Actual state is \'{}\'. Last check: {}. Done already {} attempts of foreseen {}. The next attempt will be done after {} seconds.'
+)
 PAYLOAD_SECURITY_MSG_DETONATION_QUERYING_REPORT = 'Querying Falcon Sandbox to get the report'
 # When new verdict name will be added, remember about adding it to output in config json file
 PAYLOAD_SECURITY_SAMPLE_VERDICT_NAMES = ['no specific threat', 'whitelisted', 'no verdict', 'suspicious', 'malicious', 'unknown']
