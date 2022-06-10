@@ -1,20 +1,31 @@
-<!DOCTYPE html>
+<h5>Usage</h5>
+<p>
+    Should you not be using hybrid-analysis.com as the application server, but a private cloud or on premise instance, please E-Mail support@crowdstrike.com for help on enabling the Phantom integration on your instance.
+</p>
 
-<!-- File: readme.html
-  Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
--->
-
-<html lang="en">
-    <body>
-        <h5>Usage</h5>
-        <p>
-            Should you not be using hybrid-analysis.com as the application server, but a private cloud or on premise instance, please E-Mail support@crowdstrike.com for help on enabling the Phantom integration on your instance.
-        </p>
-
-        <h5>Testing connectivity</h5>
-        <p>
-            After creating the Falcon Sandbox asset, we recommended to test the application server connectivity. That way,
-            you make sure that the provided base URL and API credentials are working correctly.
-        </p>
-    </body>
-</html>
+<h5>Testing connectivity</h5>
+<p>
+    After creating the Falcon Sandbox asset, we recommended to test the application server connectivity. That way,
+    you make sure that the provided base URL and API credentials are working correctly.
+</p>
+<p>Port Information</p>
+<p>
+    The app uses HTTP/ HTTPS protocol for communicating with the Okta server. Below are the default ports used by Splunk SOAR.
+    <table>
+        <tr class=plain>
+            <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service Name</th>
+            <th>Transport Protocol</th>
+            <th>Port</th>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;http</td>
+            <td>tcp</td>
+            <td>80</td>
+        </tr>
+        <tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https</td>
+            <td>tcp</td>
+            <td>443</td>
+        </tr>
+    </table>
+</p>
