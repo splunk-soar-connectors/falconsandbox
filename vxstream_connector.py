@@ -694,7 +694,6 @@ class VxStreamConnector(BaseConnector):
             return self.get_status()
 
         if api_api_key_data_object.if_request_success() is False:
-            self.save_progress(api_api_key_data_object.get_prepared_response_msg())
             self.set_status(phantom.APP_ERROR, 'Connectivity test failed')
             return self.get_status()
 
@@ -707,8 +706,6 @@ class VxStreamConnector(BaseConnector):
                     api_json_response['auth_level_name']
                 )
             )
-
-        self.save_progress(api_api_key_data_object.get_prepared_response_msg())
 
         return self.set_status_save_progress(phantom.APP_SUCCESS, 'Connectivity test passed')
 
