@@ -31,17 +31,17 @@ from urllib.parse import urlparse
 
 import requests
 
-from .api_classes.api_key_current import ApiKeyCurrent
-from .api_classes.api_report_file import ApiReportFile
-from .api_classes.api_report_state import ApiReportState
-from .api_classes.api_report_summary import ApiReportSummary
-from .api_classes.api_search_hash import ApiSearchHash
-from .api_classes.api_search_terms import ApiSearchTerms
-from .api_classes.api_submit_file import ApiSubmitFile
-from .api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
-from .api_classes.api_submit_online_file import ApiSubmitOnlineFile
-from .api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
-from .vxstream_consts import *
+from api_classes.api_key_current import ApiKeyCurrent
+from api_classes.api_report_file import ApiReportFile
+from api_classes.api_report_state import ApiReportState
+from api_classes.api_report_summary import ApiReportSummary
+from api_classes.api_search_hash import ApiSearchHash
+from api_classes.api_search_terms import ApiSearchTerms
+from api_classes.api_submit_file import ApiSubmitFile
+from api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
+from api_classes.api_submit_online_file import ApiSubmitOnlineFile
+from api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
+from vxstream_consts import *
 
 
 class VxError(Exception):

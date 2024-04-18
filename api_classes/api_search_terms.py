@@ -31,7 +31,7 @@ class ApiSearchTerms(ApiCaller):
     }
 
     def map_params(self, params):
-        for old, new in self.params_map.iteritems():
+        for old, new in self.params_map.items():
             if old in params:
                 params[new] = params[old]
                 del params[old]
