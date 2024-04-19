@@ -644,8 +644,6 @@ class VxStreamConnector(BaseConnector):
         data = api_response_json if 'hash' in param else api_response_json['result']
 
         for search_row in data:
-#            if search_row['verdict'] is None:
-#                self.debug_print(f'IW: {search_row}')
             if search_row['verdict'] is not None:
                 verdict_summary[self._convert_verdict_name_to_key(search_row['verdict'])] += 1
             environment = None
