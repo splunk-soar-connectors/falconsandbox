@@ -2,8 +2,3 @@ Splunk SOAR Falcon Sandbox
 Copyright (C) 2018 Hybrid Analysis GmbH
 
 Third-party Software Attributions:
-
-Library: requests
-Version: 2.25.0
-License: Apache 2.0
-Kenneth Reitz

@@ -1,1 +1,2 @@
 **Unreleased**
+* fixed errors and added check for no verdict when hunting files [PAPP-33741]
