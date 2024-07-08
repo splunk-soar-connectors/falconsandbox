@@ -1,9 +1,20 @@
 # File: vxstream_connector.py
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Copyright (C) 2018-2024 Hybrid Analysis GmbH
 #
-
-# Phantom imports
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
+# Phantom App imports
 
 import phantom.app as phantom
 import phantom.rules as ph_rules
@@ -31,17 +42,17 @@ from urllib.parse import urlparse
 
 import requests
 
-from .api_classes.api_key_current import ApiKeyCurrent
-from .api_classes.api_report_file import ApiReportFile
-from .api_classes.api_report_state import ApiReportState
-from .api_classes.api_report_summary import ApiReportSummary
-from .api_classes.api_search_hash import ApiSearchHash
-from .api_classes.api_search_terms import ApiSearchTerms
-from .api_classes.api_submit_file import ApiSubmitFile
-from .api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
-from .api_classes.api_submit_online_file import ApiSubmitOnlineFile
-from .api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
-from .vxstream_consts import *
+from api_classes.api_key_current import ApiKeyCurrent
+from api_classes.api_report_file import ApiReportFile
+from api_classes.api_report_state import ApiReportState
+from api_classes.api_report_summary import ApiReportSummary
+from api_classes.api_search_hash import ApiSearchHash
+from api_classes.api_search_terms import ApiSearchTerms
+from api_classes.api_submit_file import ApiSubmitFile
+from api_classes.api_submit_hash_for_url import ApiSubmitHashForUrl
+from api_classes.api_submit_online_file import ApiSubmitOnlineFile
+from api_classes.api_submit_url_for_analysis import ApiSubmitUrlForAnalysis
+from vxstream_consts import *
 
 
 class VxError(Exception):
@@ -644,7 +655,8 @@ class VxStreamConnector(BaseConnector):
         data = api_response_json if 'hash' in param else api_response_json['result']
 
         for search_row in data:
-            verdict_summary[self._convert_verdict_name_to_key(search_row['verdict'])] += 1
+            if search_row['verdict'] is not None:
+                verdict_summary[self._convert_verdict_name_to_key(search_row['verdict'])] += 1
             environment = None
             threatscore_verbose = None
 

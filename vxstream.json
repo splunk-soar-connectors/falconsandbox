@@ -4,17 +4,17 @@
     "description": "This app integrates with Falcon Sandbox Services to provide investigative actions",
     "type": "sandbox",
     "main_module": "vxstream_connector.py",
-    "app_version": "2.0.0",
+    "app_version": "2.1.0",
     "package_name": "phantom_vxstream_sandbox",
     "product_vendor": "Hybrid Analysis",
     "product_name": "Falcon Sandbox",
     "product_version_regex": ".*",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "6.1.1",
     "publisher": "Hybrid Analysis",
     "consolidate_widgets": true,
     "logo": "logo_vxstream.svg",
     "logo_dark": "logo_vxstream_dark.svg",
-    "license": "Copyright (C) 2018-2022 Hybrid Analysis GmbH",
+    "license": "Copyright (C) 2018-2024 Hybrid Analysis GmbH",
     "python_version": "3",
     "fips_compliant": false,
     "configuration": {
@@ -2811,27 +2811,9 @@
     ],
     "utctime_updated": "2022-01-07T21:46:16.000000Z",
     "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "certifi",
-                "input_file": "wheels/py3/certifi-2022.5.18.1-py3-none-any.whl"
-            },
-            {
-                "module": "chardet",
-                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
-            },
-            {
-                "module": "idna",
-                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
-            },
-            {
-                "module": "requests",
-                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
-            },
-            {
-                "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
-            }
-        ]
+        "wheel": []
+    },
+    "pip39_dependencies": {
+        "wheel": []
     }
 }
